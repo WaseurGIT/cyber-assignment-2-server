@@ -102,11 +102,8 @@ async function run() {
     await client.connect();
 
     const usersCollection = client
-      .db("cyberSecurityAssignment")
+      .db("cyber-assignment-2")
       .collection("users");
-    const foodsCollection = client
-      .db("cyberSecurityAssignment")
-      .collection("foods");
 
     app.get("/me", verifyToken, async (req, res) => {
       const user = await usersCollection.findOne({ email: req.user.email });
@@ -139,7 +136,7 @@ async function run() {
           },
         );
 
-        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
         await sendMail(
           email,
@@ -459,34 +456,6 @@ async function run() {
         res
           .status(500)
           .json({ message: "Error verifying code", error: error.message });
-      }
-    });
-
-    app.get("/foods", async (req, res) => {
-      try {
-        const foods = await foodsCollection.find({}).toArray();
-        res.json(foods);
-      } catch (error) {
-        res
-          .status(500)
-          .json({ message: "Error fetching foods", error: error.message });
-      }
-    });
-
-    app.get("/foods/:id", async (req, res) => {
-      try {
-        const foodId = req.params.id;
-        const food = await foodsCollection.findOne({
-          _id: new ObjectId(foodId),
-        });
-        if (!food) {
-          return res.status(404).json({ message: "Food not found" });
-        }
-        res.json({ food });
-      } catch (error) {
-        res
-          .status(500)
-          .json({ message: "Error fetching food", error: error.message });
       }
     });
 
